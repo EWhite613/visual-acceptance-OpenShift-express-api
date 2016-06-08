@@ -22,12 +22,6 @@ if (typeof ipaddress === "undefined") {
 }
 
 // httpRequest header
-var imgurApiOptions = {
-    'headers': {
-        'Content-Type': 'application/json',
-        'Authorization': 'Client-ID ' + clientId
-    }
-}
 
 app.use(function(req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', '*')
@@ -48,12 +42,23 @@ app.use(bodyParser.json({
 }))
 
 function uploadToImgur(image) {
-    // console.log(req.body.image)
-    var response = request('POST', 'https://api.imgur.com/3/image?type=base64&image=' + encodeURIComponent(image.replace('data:image\/\w+;base64,', '')), imgurApiOptions)
+    var imgurApiOptions = {
+        'headers': {
+            'Content-Type': 'application/json',
+            'Authorization': 'Client-ID ' + clientId
+        },
+        'json': {
+            'type': 'base64',
+            'image': image.replace('data:image\/\w+;base64,', '')
+        }
+
+    }
+    var response = request('POST', 'https://api.imgur.com/3/image', imgurApiOptions)
     return JSON.parse(response.getBody())
 }
 
 function commentOnPR(req, res) {
+    console.log('Recieved pr')
     var repoSlug = req.body.repoSlug
     var prNumber = req.body.prNumber
     var image = req.body.report
