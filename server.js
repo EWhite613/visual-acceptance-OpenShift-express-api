@@ -5,7 +5,23 @@ var bodyParser = require('body-parser');
 var fs = require('fs')
 var request = require('sync-request')
 var clientId = 'e39f00905b80937'
-    // httpRequest header
+
+var port = process.env.OPENSHIFT_NODEJS_PORT ||
+    process.env.OPENSHIFT_INTERNAL_PORT || 8080;
+
+var ipaddress = process.env.OPENSHIFT_NODEJS_IP ||
+    process.env.OPENSHIFT_INTERNAL_IP;
+
+
+if (typeof ipaddress === "undefined") {
+    //  Log errors on OpenShift but continue w/ 127.0.0.1 - this
+    //  allows us to run/test the app locally.
+    console.warn('No OPENSHIFT_*_IP var, using 127.0.0.1');
+
+    ipaddress = "127.0.0.1";
+}
+
+// httpRequest header
 var imgurApiOptions = {
     'headers': {
         'Content-Type': 'application/json',
@@ -61,4 +77,7 @@ app.post('/comment', function(req, res) {
     commentOnPR(req, res)
 })
 
-app.listen(process.env.PORT || 5000);
+app.listen(port, ipaddress, function() {
+    console.log('%s: Node server started on %s:%d ...',
+        Date(Date.now()), ipaddress, port);
+});
