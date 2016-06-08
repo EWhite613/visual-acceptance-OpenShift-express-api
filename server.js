@@ -7,18 +7,18 @@ var request = require('sync-request')
 var clientId = 'e39f00905b80937'
 
 var port = process.env.OPENSHIFT_NODEJS_PORT ||
-    process.env.OPENSHIFT_INTERNAL_PORT || 8080;
+    process.env.OPENSHIFT_INTERNAL_PORT || 8080
 
 var ipaddress = process.env.OPENSHIFT_NODEJS_IP ||
-    process.env.OPENSHIFT_INTERNAL_IP;
+    process.env.OPENSHIFT_INTERNAL_IP
 
 
 if (typeof ipaddress === "undefined") {
     //  Log errors on OpenShift but continue w/ 127.0.0.1 - this
     //  allows us to run/test the app locally.
-    console.warn('No OPENSHIFT_*_IP var, using 127.0.0.1');
+    console.warn('No OPENSHIFT_*_IP var, using 127.0.0.1')
 
-    ipaddress = "127.0.0.1";
+    ipaddress = "127.0.0.1"
 }
 
 // httpRequest header
@@ -30,11 +30,11 @@ var imgurApiOptions = {
 }
 
 app.use(function(req, res, next) {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    res.header('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS');
-    next();
-});
+    res.setHeader('Access-Control-Allow-Origin', '*')
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
+    res.header('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS')
+    next()
+})
 
 // configure app to use bodyParser()
 // this will let us get the data from a POST
@@ -79,5 +79,5 @@ app.post('/comment', function(req, res) {
 
 app.listen(port, ipaddress, function() {
     console.log('%s: Node server started on %s:%d ...',
-        Date(Date.now()), ipaddress, port);
+        Date(Date.now()), ipaddress, port)
 });
