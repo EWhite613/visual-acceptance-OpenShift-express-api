@@ -63,7 +63,7 @@ function commentOnPR(req, res) {
     var prNumber = req.body.prNumber
     var image = req.body.report
     var imgurResponse = uploadToImgur(image)
-    var githubApiOptions = {
+    var githubApiPostOptions = {
         'headers': {
             'user-agent': 'visual-acceptance',
             'Authorization': 'token ' + process.env.ghToken
@@ -72,9 +72,24 @@ function commentOnPR(req, res) {
             'body': '![PR ember-cli-visual-acceptance Report](' + imgurResponse.data.link + ')'
         }
     }
-    var url = 'https://api.github.com/repos/' + repoSlug + '/issues/' + prNumber + '/comments'
 
-    var response = request('POST', url, githubApiOptions)
+    var githubApiGetOptions = {
+        'headers': {
+            'user-agent': 'visual-acceptance',
+            'Authorization': 'token ' + process.env.ghToken
+        }
+    }
+    
+    var url = 'https://api.github.com/repos/' + repoSlug + '/issues/' + prNumber + '/comments'
+    var response = request('GET', url, githubApiGetOptions)
+    var bodyJSON = JSON.parse(response.getBody().toString())
+    for (var i=0; i < bodyJSON.length; i++){
+        if (bodyJSON[i].body.indexOf('![PR ember-cli-visual-acceptance Report]') > -1){
+            url = bodyJSON[i].url
+            break
+        }
+    }
+    response = request('POST', url, githubApiPostOptions)
     res.send(JSON.parse(response.getBody()))
 }
 
